@@ -1,8 +1,11 @@
 #!/usr/bin/env python2.7
 
 from __future__ import print_function, division
-import difflib
-#import diff_match_patch
+try:
+    from cdifflib import CSequenceMatcher as SequenceMatcher
+except ImportError:
+    from difflib import SequenceMatcher
+
 import argparse
 import sys
 
@@ -26,8 +29,8 @@ def main():
     with open(args.target, 'rb') as fp:
         seq1 = fp.read()
 
-    matcher = difflib.SequenceMatcher()
-    matcher.set_seq2(seq1)
+    matcher = SequenceMatcher()
+    matcher.set_seq2(list(seq1))
 
     if args.num > 0:
         estimates = []
@@ -36,7 +39,7 @@ def main():
                 continue
             with open(fname, 'rb') as fp:
                 seq2 = fp.read()
-            matcher.set_seq1(seq2)
+            matcher.set_seq1(list(seq2))
             ratio = matcher.quick_ratio()
             estimates.append((fname, ratio))
         estimates.sort(key=lambda x: x[1])
@@ -50,7 +53,7 @@ def main():
         print('{0}/{1}'.format(idx, len(nbest)), file=sys.stderr)
         with open(fname, 'rb') as fp:
             seq2 = fp.read()
-        matcher.set_seq1(seq2)
+        matcher.set_seq1(list(seq2))
         metric = matcher.ratio()
         if args.longest:
             metric = max(x.size for x in matcher.get_matching_blocks())
