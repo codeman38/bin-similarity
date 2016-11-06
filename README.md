@@ -14,6 +14,8 @@ Options:
 
 * `-l`: For ranking, instead of using the total number of matching bytes, use only the length of the longest contiguous match.
 
+* `-m`: Read only this many bytes from each file, rather than using the entire file.
+
 ## common_subs.py
 
 This script will do a brute-force comparison of two files to find non-overlapping substrings above a given length which occur in both files, and will print the hexlified substrings along with their offsets within the two files.

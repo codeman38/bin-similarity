@@ -16,18 +16,21 @@ def main():
         help='file for which to find matches')
     parser.add_argument('other', nargs='+',
         help='other file(s) to compare')
-    parser.add_argument('-n', '--num', type=int, default=0,
-        help='use quick_ratio to identify this many best guesses '
+    parser.add_argument('-n', '--num', metavar='N', type=int, default=0,
+        help='use quick_ratio and keep only the N best guesses '
              'before calculating the true similarity ratios')
     parser.add_argument('-l', '--longest', action='store_true',
         help='use longest match instead of ratio')
     parser.add_argument('-s', '--scaled', action='store_true',
         help='scale ratios relative to file sizes (including '
              'initial filtering by rough ratio)')
+    parser.add_argument('-m', '--maxbytes', metavar='N', type=int, default=-1,
+        help='limit comparisons to the first N bytes from each file '
+             '(default: entire file)')
     args = parser.parse_args()
 
     with open(args.target, 'rb') as fp:
-        seq1 = fp.read()
+        seq1 = fp.read(args.maxbytes)
 
     matcher = SequenceMatcher()
     matcher.set_seq2(list(seq1))
@@ -38,7 +41,7 @@ def main():
             if fname == args.target:
                 continue
             with open(fname, 'rb') as fp:
-                seq2 = fp.read()
+                seq2 = fp.read(args.maxbytes)
             matcher.set_seq1(list(seq2))
             ratio = matcher.quick_ratio()
             estimates.append((fname, ratio))
