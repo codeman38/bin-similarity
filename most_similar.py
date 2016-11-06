@@ -13,6 +13,9 @@ def main():
         help='file for which to find matches')
     parser.add_argument('other', nargs='+',
         help='other file(s) to compare')
+    parser.add_argument('-n', '--num', type=int, default=0,
+        help='use quick_ratio to identify this many best guesses '
+             'before calculating the true similarity ratios')
     parser.add_argument('-l', '--longest', action='store_true',
         help='use longest match instead of ratio')
     parser.add_argument('-s', '--scaled', action='store_true',
@@ -23,25 +26,30 @@ def main():
     with open(args.target, 'rb') as fp:
         seq1 = fp.read()
 
-    estimates = []
     matcher = difflib.SequenceMatcher()
     matcher.set_seq2(seq1)
-    for fname in args.other:
-        if fname == args.target:
-            continue
-        with open(fname, 'rb') as fp:
-            seq2 = fp.read()
-        matcher.set_seq1(seq2)
-        ratio = matcher.quick_ratio()
-        if args.scaled:
-            ratio *= (len(seq1) + len(seq2)) / 2
-        estimates.append((fname, ratio))
-    estimates.sort(key=lambda x: x[1])
-    estimates = estimates[-100:]
+
+    if args.num > 0:
+        estimates = []
+        for fname in args.other:
+            if fname == args.target:
+                continue
+            with open(fname, 'rb') as fp:
+                seq2 = fp.read()
+            matcher.set_seq1(seq2)
+            ratio = matcher.quick_ratio()
+            if args.scaled:
+                ratio *= (len(seq1) + len(seq2)) / 2
+            estimates.append((fname, ratio))
+        estimates.sort(key=lambda x: x[1])
+        estimates = estimates[-args.num:]
+        nbest = [x[0] for x in estimates]
+    else:
+        nbest = args.other
 
     actuals = []
-    for idx, (fname, ratio) in enumerate(estimates):
-        print('{0}/{1}'.format(idx, len(estimates)), file=sys.stderr)
+    for idx, fname in enumerate(nbest):
+        print('{0}/{1}'.format(idx, len(nbest)), file=sys.stderr)
         with open(fname, 'rb') as fp:
             seq2 = fp.read()
         matcher.set_seq1(seq2)
