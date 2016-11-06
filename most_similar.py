@@ -38,8 +38,6 @@ def main():
                 seq2 = fp.read()
             matcher.set_seq1(seq2)
             ratio = matcher.quick_ratio()
-            if args.scaled:
-                ratio *= (len(seq1) + len(seq2)) / 2
             estimates.append((fname, ratio))
         estimates.sort(key=lambda x: x[1])
         estimates = estimates[-args.num:]

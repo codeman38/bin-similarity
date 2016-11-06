@@ -10,7 +10,7 @@ This script, given a binary and a set of other binaries for comparison, will use
 
 Options:
 
-* `-s`: Instead of using the ratio of matching bytes, the absolute number of matching bytes (i.e., the ratio multiplied by half the combined length) will be used for both filtering and ranking the results.
+* `-s`: Instead of using the ratio of matching bytes, the absolute number of matching bytes (i.e., the ratio multiplied by half the combined length) will be used when ranking the results. (Note that this scaling is *not* applied during quick_ratio filtering, as the estimates for large files tend to be very high after scaling.)
 
 * `-l`: For ranking, instead of using the total number of matching bytes, use only the length of the longest contiguous match.
 
