@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 import argparse
+import sys
 
 def main():
     parser = argparse.ArgumentParser(
@@ -30,7 +31,7 @@ def main():
             print(spaced_hexlify(data1[pos1:pos1+match_len]))
             print()
 
-def find_matches(data1, data2, min_len=0):
+def find_matches(data1, data2, min_len=1):
     if min_len < 1: min_len = 1
     matched1, matched2 = [], []
     for p1 in range(len(data1)):
@@ -40,7 +41,7 @@ def find_matches(data1, data2, min_len=0):
         for p2 in range(len(data2)):
             if contains_pos(matched2, p2):
                 continue
-            match_len = longest_match(data1[p1:], data2[p2:])
+            match_len = longest_match(data1[p1:], data2[p2:], min_len)
             if match_len >= min_len:
                 yield (match_len, p1, p2)
                 matched1.append((p1, p1+match_len))
@@ -52,9 +53,11 @@ def contains_pos(matched, pos):
             return True
     return False
 
-def longest_match(data1, data2):
+def longest_match(data1, data2, min_len=1):
     max_pos = min(len(data1), len(data2))
-    pos = 0
+    pos = min(min_len, max_pos)
+    if data1[:pos] != data2[:pos]:
+        return 0
     while pos < max_pos:
         if data1[pos] != data2[pos]:
             break
