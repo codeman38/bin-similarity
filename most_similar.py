@@ -55,7 +55,7 @@ def main():
     for idx, fname in enumerate(nbest):
         print('{0}/{1}'.format(idx, len(nbest)), file=sys.stderr)
         with open(fname, 'rb') as fp:
-            seq2 = fp.read()
+            seq2 = fp.read(args.maxbytes)
         matcher.set_seq1(list(seq2))
         metric = matcher.ratio()
         if args.longest:
