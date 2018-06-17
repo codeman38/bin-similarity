@@ -16,10 +16,11 @@ def hashcode_crc(string):
 
 def minhash(string, sublen, xors, hashfunc=hashcode_fnv32):
     hashes = [sys.maxsize for x in xors]
-    for xor_idx, xor in enumerate(xors):
-        for idx in range(len(string)+1-sublen):
-            substr = string[idx:idx+sublen]
-            hashval = hashfunc(substr) ^ xor
+    for idx in range(len(string)+1-sublen):
+        substr = string[idx:idx+sublen]
+        hashbase = hashfunc(substr)
+        for xor_idx, xor in enumerate(xors):
+            hashval = hashbase ^ xor
             if hashval < hashes[xor_idx]:
                 hashes[xor_idx] = hashval
     return tuple(hashes)
