@@ -41,7 +41,7 @@ def find_matches(data1, data2, min_len=1):
         for p2 in range(len(data2)):
             if contains_pos(matched2, p2):
                 continue
-            match_len = longest_match(data1[p1:], data2[p2:], min_len)
+            match_len = longest_match(data1, p1, data2, p2)
             if match_len >= min_len:
                 yield (match_len, p1, p2)
                 matched1.append((p1, p1+match_len))
@@ -53,13 +53,11 @@ def contains_pos(matched, pos):
             return True
     return False
 
-def longest_match(data1, data2, min_len=1):
-    max_pos = min(len(data1), len(data2))
-    pos = min(min_len, max_pos)
-    if data1[:pos] != data2[:pos]:
-        return 0
+def longest_match(data1, s1, data2, s2):
+    max_pos = min(len(data1)-s1, len(data2)-s2)
+    pos = 0
     while pos < max_pos:
-        if data1[pos] != data2[pos]:
+        if data1[s1+pos] != data2[s2+pos]:
             break
         pos += 1
     return pos
