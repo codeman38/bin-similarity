@@ -38,14 +38,16 @@ def find_matches(data1, data2, min_len=1):
         if contains_pos(matched1, p1):
             continue
         matched2[:] = []
-        for p2 in range(len(data2)):
-            if contains_pos(matched2, p2):
-                continue
+        p2 = 0
+        while p2 < len(data2):
             match_len = longest_match(data1, p1, data2, p2)
             if match_len >= min_len:
                 yield (match_len, p1, p2)
                 matched1.append((p1, p1+match_len))
                 matched2.append((p2, p2+match_len))
+                p2 += match_len
+            else:
+                p2 += 1
 
 def contains_pos(matched, pos):
     for rng in matched:
