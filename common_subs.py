@@ -65,7 +65,13 @@ def longest_match(data1, data2, min_len=1):
     return pos
 
 def spaced_hexlify(bytestring):
-    return ' '.join('{0:02x}'.format(ord(x)) for x in bytestring)
+    return ' '.join('{0:02x}'.format(safe_ord(x)) for x in bytestring)
+
+def safe_ord(ch):
+    if isinstance(ch, int):
+        return ch
+    else:
+        return ord(ch)
 
 def is_repeated_byte(bytestring):
     return all(x==bytestring[0] for x in bytestring)
